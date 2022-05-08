@@ -1,0 +1,59 @@
+// The Technical Challenge consists of creating an API with Golang using
+// gRPC with stream pipes that exposes an Upvote service endpoints.
+//  The API will provide the user an interface to upvote or downvote a
+// known list of the main Cryptocurrencies (Bitcoin, ethereum, litecoin, etc..).
+
+
+syntax = "proto3";
+
+package pb;
+
+option go_package = "app/pb";
+
+service UpvoteService {
+  rpc ListCoins(ListCoinsRequest) returns (stream CoinsResponse) {}
+  rpc GetCoinByName(CoinNameRequest) returns (CoinResponse) {}
+  rpc CreateCoin(CoinNameRequest) returns (CoinResponse) {}
+  rpc UpdateCoin(CoinIdRequest) returns (CoinResponse) {}
+  rpc RemoveCoin(CoinIdRequest) returns (CoinResponse) {}
+  rpc Upvote(CoinIdRequest) returns (CoinResponse) {}
+  rpc DownVote(CoinIdRequest) returns (CoinResponse) {}
+  rpc RemoveUpvote(CoinIdRequest) returns (CoinResponse) {}
+  rpc RemoveDownvote(CoinIdRequest) returns (CoinResponse) {}
+
+}
+message CoinData {
+  string id = 1;
+  string coin_name = 2;
+  int64 up_votes = 3;     
+  int64 down_votes = 4;
+  int64 total_votes = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message ListCoinsRequest {}
+
+message CoinsResponse {
+  CoinData data = 1;
+}
+
+
+message CoinIdRequest{
+    string id = 1;
+}
+
+message CoinNameRequest{
+    string coin_name = 1;
+}
+
+message CoinResponse {
+    string id = 1;
+    string coin_name = 2;
+    int64 up_votes = 3;     
+    int64 down_votes = 4;
+    int64 total_votes = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
