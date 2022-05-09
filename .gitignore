@@ -1,1 +1,4 @@
 go.sum
+go.mod
+__debug_bin
+pb
