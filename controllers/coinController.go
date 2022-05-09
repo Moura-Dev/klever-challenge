@@ -34,11 +34,14 @@ func (s *UpvoteServiceServer) CreateCoin(ctx context.Context, req *pb.CoinNameRe
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-
+	// TODO: found, err := s.usersRepository.GetByEmail(req.Email)
 	err := s.CoinsRepository.Create(&coin)
-
-	// fmt.Println(coin, err)
+	if err != nil {
+		return nil, err
+	}
+	coin.ToProtoBuffer()
 	fmt.Print(coin)
+	return coin.ToProtoBuffer(), nil
 
-	return nil, err
+	// return nil, err
 }
