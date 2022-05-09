@@ -23,6 +23,7 @@ import (
 	"klever-challenge/app/pb"
 	"klever-challenge/controllers"
 	"klever-challenge/db"
+	"klever-challenge/repository"
 	"log"
 	"net"
 	"os"
@@ -33,7 +34,15 @@ import (
 )
 
 func main() {
-	coinDb, mongoCtx := db.Connect()
+
+	conn, err := db.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	coinsRepository := repository.NewCoinRepository(conn)
+
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", "50051"))
 	if err != nil {
 		log.Fatalf("Failed connect on port :%s: %s", "50051", err.Error())
@@ -45,8 +54,7 @@ func main() {
 	reflection.Register(grpcServer)
 
 	upvoteService := controllers.UpvoteServiceServer{
-		Ctx: mongoCtx,
-		Db:  coinDb,
+		CoinsRepository: coinsRepository,
 	}
 
 	pb.RegisterUpvoteServiceServer(grpcServer, &upvoteService)
@@ -58,7 +66,7 @@ func main() {
 	}()
 	fmt.Printf("Server started on port :%s\n", "50051")
 
-	c := make(chan os.Signal)
+	c := make(chan os.Signal, 1)
 
 	signal.Notify(c, os.Interrupt)
 
@@ -66,8 +74,6 @@ func main() {
 
 	grpcServer.Stop()
 	listener.Close()
-
-	coinDb.Database().Client().Disconnect(mongoCtx)
-
+	conn.Close()
 	fmt.Println("Server stopped.")
 }
