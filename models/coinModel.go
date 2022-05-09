@@ -24,3 +24,17 @@ func (c *Coin) ToProtoBuffer() *pb.CoinResponse {
 		DownVotes: c.Downvote,
 	}
 }
+
+func (c *Coin) ToProtoBufferListCoin() *pb.CoinsResponse {
+	return &pb.CoinsResponse{
+		Data: &pb.CoinData{
+			Id:         c.ID.Hex(),
+			CoinName:   c.CoinName,
+			UpVotes:    c.Upvote,
+			DownVotes:  c.Downvote,
+			TotalVotes: 0,
+			CreatedAt:  "",
+			UpdatedAt:  "",
+		},
+	}
+}
