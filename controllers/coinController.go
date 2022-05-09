@@ -5,33 +5,40 @@ import (
 	"fmt"
 	"klever-challenge/app/pb"
 	"klever-challenge/models"
+	"klever-challenge/repository"
+	"strings"
+	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UpvoteServiceServer struct {
-	Db  *mongo.Collection
-	Ctx context.Context
+	repository.CoinsRepository
 	pb.UnimplementedUpvoteServiceServer
 }
 
-func (s *UpvoteServiceServer) ListCoin(req *pb.ListCoinsRequest, stream pb.UpvoteService_ListCoinsServer) error {
+func (s *UpvoteServiceServer) ListCoins(req *pb.ListCoinsRequest, stream pb.UpvoteService_ListCoinsServer) error {
+	coins, err := s.CoinsRepository.GetAll()
 
-	if err != nil {
-		return status.Errorf(codes.Internal, fmt.Sprintf("Not found"))
-	}
-	coins := models.Coin{}
-
-	for cursor.Next(s.Ctx) {
-		err := cursor.Decode(&coins)
-		if err != nil {
-			return status.Errorf(codes.Unavailable, fmt.Sprintf("Could not decode data: %v", err))
-		}
-		stream.Send(&pb.CoinsResponse{
-			Data: &pb.CoinData{},
-		})
-	}
+	fmt.Println(coins, err)
 	return nil
+}
+
+func (s *UpvoteServiceServer) CreateCoin(ctx context.Context, req *pb.CoinNameRequest) (*pb.CoinResponse, error) {
+
+	coin := models.Coin{
+		ID:        primitive.NewObjectID(),
+		CoinName:  strings.Title(req.GetCoinName()),
+		Upvote:    0,
+		Downvote:  0,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	err := s.CoinsRepository.Create(&coin)
+
+	// fmt.Println(coin, err)
+	fmt.Print(coin)
+
+	return nil, err
 }
