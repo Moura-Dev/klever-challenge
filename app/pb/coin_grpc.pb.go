@@ -25,12 +25,12 @@ type UpvoteServiceClient interface {
 	ListCoins(ctx context.Context, in *ListCoinsRequest, opts ...grpc.CallOption) (UpvoteService_ListCoinsClient, error)
 	GetCoinByName(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
 	CreateCoin(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
-	UpdateCoin(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
+	UpdateCoin(ctx context.Context, in *UpdateCoinRequest, opts ...grpc.CallOption) (*CoinResponse, error)
 	RemoveCoin(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
-	Upvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
-	DownVote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
-	RemoveUpvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
-	RemoveDownvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error)
+	UpVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
+	DownVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
+	RemoveUpVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
+	RemoveDownvote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error)
 }
 
 type upvoteServiceClient struct {
@@ -91,7 +91,7 @@ func (c *upvoteServiceClient) CreateCoin(ctx context.Context, in *CoinNameReques
 	return out, nil
 }
 
-func (c *upvoteServiceClient) UpdateCoin(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
+func (c *upvoteServiceClient) UpdateCoin(ctx context.Context, in *UpdateCoinRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
 	out := new(CoinResponse)
 	err := c.cc.Invoke(ctx, "/pb.UpvoteService/UpdateCoin", in, out, opts...)
 	if err != nil {
@@ -109,16 +109,16 @@ func (c *upvoteServiceClient) RemoveCoin(ctx context.Context, in *CoinIdRequest,
 	return out, nil
 }
 
-func (c *upvoteServiceClient) Upvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
+func (c *upvoteServiceClient) UpVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
 	out := new(CoinResponse)
-	err := c.cc.Invoke(ctx, "/pb.UpvoteService/Upvote", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.UpvoteService/UpVote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upvoteServiceClient) DownVote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
+func (c *upvoteServiceClient) DownVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
 	out := new(CoinResponse)
 	err := c.cc.Invoke(ctx, "/pb.UpvoteService/DownVote", in, out, opts...)
 	if err != nil {
@@ -127,16 +127,16 @@ func (c *upvoteServiceClient) DownVote(ctx context.Context, in *CoinIdRequest, o
 	return out, nil
 }
 
-func (c *upvoteServiceClient) RemoveUpvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
+func (c *upvoteServiceClient) RemoveUpVote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
 	out := new(CoinResponse)
-	err := c.cc.Invoke(ctx, "/pb.UpvoteService/RemoveUpvote", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.UpvoteService/RemoveUpVote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upvoteServiceClient) RemoveDownvote(ctx context.Context, in *CoinIdRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
+func (c *upvoteServiceClient) RemoveDownvote(ctx context.Context, in *CoinNameRequest, opts ...grpc.CallOption) (*CoinResponse, error) {
 	out := new(CoinResponse)
 	err := c.cc.Invoke(ctx, "/pb.UpvoteService/RemoveDownvote", in, out, opts...)
 	if err != nil {
@@ -152,12 +152,12 @@ type UpvoteServiceServer interface {
 	ListCoins(*ListCoinsRequest, UpvoteService_ListCoinsServer) error
 	GetCoinByName(context.Context, *CoinNameRequest) (*CoinResponse, error)
 	CreateCoin(context.Context, *CoinNameRequest) (*CoinResponse, error)
-	UpdateCoin(context.Context, *CoinIdRequest) (*CoinResponse, error)
+	UpdateCoin(context.Context, *UpdateCoinRequest) (*CoinResponse, error)
 	RemoveCoin(context.Context, *CoinIdRequest) (*CoinResponse, error)
-	Upvote(context.Context, *CoinIdRequest) (*CoinResponse, error)
-	DownVote(context.Context, *CoinIdRequest) (*CoinResponse, error)
-	RemoveUpvote(context.Context, *CoinIdRequest) (*CoinResponse, error)
-	RemoveDownvote(context.Context, *CoinIdRequest) (*CoinResponse, error)
+	UpVote(context.Context, *CoinNameRequest) (*CoinResponse, error)
+	DownVote(context.Context, *CoinNameRequest) (*CoinResponse, error)
+	RemoveUpVote(context.Context, *CoinNameRequest) (*CoinResponse, error)
+	RemoveDownvote(context.Context, *CoinNameRequest) (*CoinResponse, error)
 	mustEmbedUnimplementedUpvoteServiceServer()
 }
 
@@ -174,22 +174,22 @@ func (UnimplementedUpvoteServiceServer) GetCoinByName(context.Context, *CoinName
 func (UnimplementedUpvoteServiceServer) CreateCoin(context.Context, *CoinNameRequest) (*CoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCoin not implemented")
 }
-func (UnimplementedUpvoteServiceServer) UpdateCoin(context.Context, *CoinIdRequest) (*CoinResponse, error) {
+func (UnimplementedUpvoteServiceServer) UpdateCoin(context.Context, *UpdateCoinRequest) (*CoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCoin not implemented")
 }
 func (UnimplementedUpvoteServiceServer) RemoveCoin(context.Context, *CoinIdRequest) (*CoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveCoin not implemented")
 }
-func (UnimplementedUpvoteServiceServer) Upvote(context.Context, *CoinIdRequest) (*CoinResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Upvote not implemented")
+func (UnimplementedUpvoteServiceServer) UpVote(context.Context, *CoinNameRequest) (*CoinResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpVote not implemented")
 }
-func (UnimplementedUpvoteServiceServer) DownVote(context.Context, *CoinIdRequest) (*CoinResponse, error) {
+func (UnimplementedUpvoteServiceServer) DownVote(context.Context, *CoinNameRequest) (*CoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownVote not implemented")
 }
-func (UnimplementedUpvoteServiceServer) RemoveUpvote(context.Context, *CoinIdRequest) (*CoinResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveUpvote not implemented")
+func (UnimplementedUpvoteServiceServer) RemoveUpVote(context.Context, *CoinNameRequest) (*CoinResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUpVote not implemented")
 }
-func (UnimplementedUpvoteServiceServer) RemoveDownvote(context.Context, *CoinIdRequest) (*CoinResponse, error) {
+func (UnimplementedUpvoteServiceServer) RemoveDownvote(context.Context, *CoinNameRequest) (*CoinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveDownvote not implemented")
 }
 func (UnimplementedUpvoteServiceServer) mustEmbedUnimplementedUpvoteServiceServer() {}
@@ -263,7 +263,7 @@ func _UpvoteService_CreateCoin_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _UpvoteService_UpdateCoin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CoinIdRequest)
+	in := new(UpdateCoinRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -275,7 +275,7 @@ func _UpvoteService_UpdateCoin_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/pb.UpvoteService/UpdateCoin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpvoteServiceServer).UpdateCoin(ctx, req.(*CoinIdRequest))
+		return srv.(UpvoteServiceServer).UpdateCoin(ctx, req.(*UpdateCoinRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -298,26 +298,26 @@ func _UpvoteService_RemoveCoin_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpvoteService_Upvote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CoinIdRequest)
+func _UpvoteService_UpVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CoinNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpvoteServiceServer).Upvote(ctx, in)
+		return srv.(UpvoteServiceServer).UpVote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.UpvoteService/Upvote",
+		FullMethod: "/pb.UpvoteService/UpVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpvoteServiceServer).Upvote(ctx, req.(*CoinIdRequest))
+		return srv.(UpvoteServiceServer).UpVote(ctx, req.(*CoinNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _UpvoteService_DownVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CoinIdRequest)
+	in := new(CoinNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -329,31 +329,31 @@ func _UpvoteService_DownVote_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/pb.UpvoteService/DownVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpvoteServiceServer).DownVote(ctx, req.(*CoinIdRequest))
+		return srv.(UpvoteServiceServer).DownVote(ctx, req.(*CoinNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpvoteService_RemoveUpvote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CoinIdRequest)
+func _UpvoteService_RemoveUpVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CoinNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpvoteServiceServer).RemoveUpvote(ctx, in)
+		return srv.(UpvoteServiceServer).RemoveUpVote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.UpvoteService/RemoveUpvote",
+		FullMethod: "/pb.UpvoteService/RemoveUpVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpvoteServiceServer).RemoveUpvote(ctx, req.(*CoinIdRequest))
+		return srv.(UpvoteServiceServer).RemoveUpVote(ctx, req.(*CoinNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _UpvoteService_RemoveDownvote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CoinIdRequest)
+	in := new(CoinNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -365,7 +365,7 @@ func _UpvoteService_RemoveDownvote_Handler(srv interface{}, ctx context.Context,
 		FullMethod: "/pb.UpvoteService/RemoveDownvote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpvoteServiceServer).RemoveDownvote(ctx, req.(*CoinIdRequest))
+		return srv.(UpvoteServiceServer).RemoveDownvote(ctx, req.(*CoinNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -394,16 +394,16 @@ var UpvoteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UpvoteService_RemoveCoin_Handler,
 		},
 		{
-			MethodName: "Upvote",
-			Handler:    _UpvoteService_Upvote_Handler,
+			MethodName: "UpVote",
+			Handler:    _UpvoteService_UpVote_Handler,
 		},
 		{
 			MethodName: "DownVote",
 			Handler:    _UpvoteService_DownVote_Handler,
 		},
 		{
-			MethodName: "RemoveUpvote",
-			Handler:    _UpvoteService_RemoveUpvote_Handler,
+			MethodName: "RemoveUpVote",
+			Handler:    _UpvoteService_RemoveUpVote_Handler,
 		},
 		{
 			MethodName: "RemoveDownvote",

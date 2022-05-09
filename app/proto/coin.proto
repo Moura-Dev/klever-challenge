@@ -14,12 +14,12 @@ service UpvoteService {
   rpc ListCoins(ListCoinsRequest) returns (stream CoinsResponse) {}
   rpc GetCoinByName(CoinNameRequest) returns (CoinResponse) {}
   rpc CreateCoin(CoinNameRequest) returns (CoinResponse) {}
-  rpc UpdateCoin(CoinIdRequest) returns (CoinResponse) {}
+  rpc UpdateCoin(UpdateCoinRequest) returns (CoinResponse) {}
   rpc RemoveCoin(CoinIdRequest) returns (CoinResponse) {}
-  rpc Upvote(CoinIdRequest) returns (CoinResponse) {}
-  rpc DownVote(CoinIdRequest) returns (CoinResponse) {}
-  rpc RemoveUpvote(CoinIdRequest) returns (CoinResponse) {}
-  rpc RemoveDownvote(CoinIdRequest) returns (CoinResponse) {}
+  rpc UpVote(CoinNameRequest) returns (CoinResponse) {}
+  rpc DownVote(CoinNameRequest) returns (CoinResponse) {}
+  rpc RemoveUpVote(CoinNameRequest) returns (CoinResponse) {}
+  rpc RemoveDownvote(CoinNameRequest) returns (CoinResponse) {}
 
 }
 message CoinData {
@@ -57,3 +57,8 @@ message CoinResponse {
     string updated_at = 7;
 }
 
+
+message UpdateCoinRequest{
+  string id = 1;
+  string coin_name = 2;
+}
