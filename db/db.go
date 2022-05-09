@@ -2,32 +2,36 @@ package db
 
 import (
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// URL DB
-const uri = "mongodb://localhost:27017"
+type Connection interface {
+	Close()
+	DB() *mongo.Database
+}
 
-func Connect() (*mongo.Collection, context.Context) {
+type conn struct {
+	session  *mongo.Client
+	database *mongo.Database
+}
 
+func Connect() (Connection, error) {
+	// Set client options
 	mongoCtx := context.Background()
-
-	// Create client and connect
-	client, err := mongo.Connect(mongoCtx, options.Client().ApplyURI(uri))
+	// Create a new client and connect to the server
+	client, err := mongo.Connect(mongoCtx, options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
-		panic(err)
-	}
-	fmt.Println("Success connected.")
+	return &conn{session: client, database: client.Database("klever-challenge")}, nil
+}
 
-	// DB collection
-	kleverDB := client.Database("klever-challenge").Collection("coins")
+func (c *conn) Close() {
+	c.session.Disconnect(context.Background())
+}
 
-	return kleverDB, mongoCtx
+func (c *conn) DB() *mongo.Database {
+	return c.database
 }
