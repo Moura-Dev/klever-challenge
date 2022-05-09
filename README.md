@@ -25,7 +25,7 @@ gRPC with stream pipes that exposes an Upvote service endpoints.
 Go mod Init
 
 ```bash
-  go mod init github.com/gabriel-henriq/klever-challenge/api
+go mod init
 ```
 
 Gen Proto files
